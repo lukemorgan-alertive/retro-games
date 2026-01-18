@@ -5,13 +5,15 @@ A retro games catalog management system with both a CLI tool and REST API, shari
 ## Components
 
 ### CLI Tool (`retro-games-cli/`)
-Command-line interface for managing your retro games collection. Supports adding individual games, bulk importing from CSV, listing, and exporting.
+Command-line interface for managing your retro games collection and admin users. Supports adding individual games, bulk importing from CSV, listing, exporting, and admin user management.
 
 **Features:**
 - Initialize and manage SQLite database
 - Add games with title, release year, platform, date acquired, and condition
 - Import/export games via CSV
 - Condition tracking (mint, vgc, gc, used)
+- Admin user management (add, remove, list)
+- Secure password hashing with bcrypt
 
 ### REST API (`retro-games-api/`)
 FastAPI-based REST API providing programmatic access to the games catalog.
@@ -26,11 +28,16 @@ FastAPI-based REST API providing programmatic access to the games catalog.
 ## Quick Start
 
 ```bash
-# Initialize the database
+# Set up the CLI tool
 cd retro-games-cli
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# Initialize the database
 python3 main.py init
 
-# Start the API
+# Start the API (in a separate terminal)
 cd ../retro-games-api
 pip install -r requirements.txt
 uvicorn app:app --reload
@@ -44,5 +51,5 @@ uvicorn app:app --reload
 
 ## TODOS
 
-- [ ] Add the ability to create admin users through the cli tool.
-- [ ] Add Login/Lougout routues for admin users which utilise JWT http authentication to the REST API for the CREATE, UPDATE AND DELETE routes.
+- [x] Add the ability to create admin users through the cli tool.
+- [ ] Add Login/Logout routes for admin users which utilise JWT http authentication to the REST API for the CREATE, UPDATE AND DELETE routes.

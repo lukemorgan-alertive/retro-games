@@ -30,6 +30,7 @@ Both components share a common SQLite database (`retro_games.db`) and implement 
 - Parameterized queries to prevent SQL injection
 - Input validation with Pydantic (API) and argparse (CLI)
 - Interactive API documentation (Swagger/ReDoc)
+- Admin user management with secure password hashing (bcrypt)
 
 ---
 
@@ -45,6 +46,7 @@ retro-games/
 │   └── README.md                  # API-specific documentation
 ├── retro-games-cli/               # Command-line interface
 │   ├── main.py                    # CLI commands and logic
+│   ├── requirements.txt           # Python dependencies (bcrypt)
 │   ├── sample.csv                 # Example CSV for import
 │   └── README.md                  # CLI-specific documentation
 ├── SECURITY.md                    # Security considerations
@@ -83,9 +85,12 @@ retro-games/
 - csv: CSV file handling
 - sqlite3: Database operations
 - dataclasses: Data structure definitions
+- bcrypt: Secure password hashing for admin users
+- getpass: Hidden password input
 
 **Key Files:**
 - `main.py`: Complete CLI implementation with all commands
+- `requirements.txt`: External dependencies (bcrypt)
 
 ---
 
@@ -104,7 +109,7 @@ CREATE TABLE IF NOT EXISTS games (
 )
 ```
 
-### Field Descriptions
+### Games Field Descriptions
 
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
@@ -120,6 +125,32 @@ CREATE TABLE IF NOT EXISTS games (
 - `vgc`: Very Good Condition
 - `gc`: Good Condition
 - `used`: Used condition
+
+### Admin Users Table
+
+```sql
+CREATE TABLE IF NOT EXISTS admin_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    firstname TEXT,
+    lastname TEXT,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+)
+```
+
+### Admin Users Field Descriptions
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `id` | INTEGER | PRIMARY KEY, AUTOINCREMENT, required | Unique admin identifier (auto-assigned) |
+| `username` | TEXT | NOT NULL, UNIQUE, required | Unique username (3-50 alphanumeric chars, underscores, hyphens) |
+| `firstname` | TEXT | nullable | Admin's first name (optional) |
+| `lastname` | TEXT | nullable | Admin's last name (optional) |
+| `password_hash` | TEXT | NOT NULL, required | Bcrypt-hashed password (never stored as plaintext) |
+| `created_at` | TEXT | NOT NULL, required | ISO timestamp when admin was created (auto-assigned) |
+| `updated_at` | TEXT | NOT NULL, required | ISO timestamp when admin was last modified (auto-assigned) |
 
 ---
 
@@ -309,6 +340,55 @@ Super Mario World,1990,SNES,2024-01-15,vgc
 The Legend of Zelda,1986,NES,2025-12-20,mint
 ```
 
+### Admin User Management Commands
+
+#### Password Requirements
+When creating an admin user, the password must meet the following strength requirements:
+- Minimum 12 characters
+- At least one letter (a-z or A-Z)
+- At least one number (0-9)
+- At least one special character (`!@#$%^&*()_+-=[]{}|;:,.<>?`)
+
+The CLI will display these requirements and validate the password before creating the admin user.
+
+#### Add an Admin User
+```bash
+python3 main.py admin-add USERNAME [--firstname NAME] [--lastname NAME]
+```
+Creates a new admin user. You will be prompted to enter and confirm a password (input is hidden for security).
+
+**Example:**
+```bash
+python3 main.py admin-add johndoe --firstname John --lastname Doe
+```
+
+**Arguments:**
+- `USERNAME`: Unique username (3-50 alphanumeric characters, underscores, or hyphens)
+- `--firstname`: Optional first name
+- `--lastname`: Optional last name
+
+#### List Admin Users
+```bash
+python3 main.py admin-list [--db PATH]
+```
+Displays all admin users in a formatted table showing ID, username, name, and timestamps.
+Note: Password hashes are never displayed for security reasons.
+
+#### Remove an Admin User
+```bash
+python3 main.py admin-remove USERNAME [--yes]
+```
+Removes an admin user by username. Confirmation is required unless `--yes` flag is provided.
+
+**Example:**
+```bash
+python3 main.py admin-remove johndoe --yes
+```
+
+**Arguments:**
+- `USERNAME`: Username of the admin to remove
+- `--yes`, `-y`: Skip confirmation prompt
+
 ---
 
 ## Security
@@ -331,16 +411,25 @@ cursor = conn.execute(
 2. **Input Validation**:
    - API: Pydantic models validate all request data
    - CLI: argparse type validators for all inputs
-3. **Database-Level Constraints**: CHECK constraint on `condition` field
+3. **Database-Level Constraints**: CHECK constraint on `condition` field, UNIQUE constraint on username
 4. **Foreign Keys**: `PRAGMA foreign_keys = ON` enforces referential integrity
 5. **No String Concatenation**: SQL statements never concatenate user input
+6. **Secure Password Handling**:
+   - Password strength validation enforced (min 12 chars, letters, numbers, special chars)
+   - Passwords are hashed using bcrypt with automatic salting
+   - Plaintext passwords are never stored in the database
+   - Password input uses `getpass` for hidden terminal input
+   - Password hashes are never displayed in list output
+   - Bcrypt's constant-time comparison prevents timing attacks
 
 ### Validation Rules
 
 **Release Year**: 1970 ≤ year ≤ 2030  
 **Date Format**: ISO 8601 (YYYY-MM-DD)  
 **Condition**: Enum-like restriction to 4 specific values  
-**Required Fields**: title, release_year, platform, date_acquired must be non-empty
+**Required Fields**: title, release_year, platform, date_acquired must be non-empty  
+**Admin Username**: 3-50 characters, alphanumeric with underscores and hyphens only  
+**Admin Password**: Minimum 12 characters, must include letters, numbers, and special characters
 
 ### Security Documentation
 - `SECURITY.md`: Comprehensive security overview
@@ -378,12 +467,17 @@ uvicorn app:app --reload
 
 ### CLI Setup
 
-No installation required. The CLI uses only Python standard library modules.
+The CLI requires the `bcrypt` package for secure password hashing. Set up a virtual environment:
 
 ```bash
 cd retro-games-cli
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 python3 main.py --help
 ```
+
+The virtual environment (`.venv`) is ignored by git and should not be committed.
 
 ---
 
@@ -392,8 +486,13 @@ python3 main.py --help
 ### Scenario 1: Setting Up a New Catalog
 
 ```bash
-# Initialize database
+# Set up virtual environment
 cd retro-games-cli
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Initialize database
 python3 main.py init
 
 # Add games manually
@@ -407,7 +506,26 @@ python3 main.py import sample.csv
 python3 main.py list
 ```
 
-### Scenario 2: Using the API
+### Scenario 2: Managing Admin Users
+
+```bash
+# Add an admin user (you'll be prompted for password)
+python3 main.py admin-add admin1 --firstname Alice --lastname Smith
+
+# Add another admin user
+python3 main.py admin-add admin2 --firstname Bob
+
+# List all admin users
+python3 main.py admin-list
+
+# Remove an admin user (with confirmation)
+python3 main.py admin-remove admin2
+
+# Remove an admin user (skip confirmation)
+python3 main.py admin-remove admin2 --yes
+```
+
+### Scenario 3: Using the API
 
 ```bash
 # Start the API server
@@ -447,7 +565,7 @@ curl -X PUT "http://localhost:8000/games/1" \
 curl -X DELETE "http://localhost:8000/games/1"
 ```
 
-### Scenario 3: Data Export/Backup
+### Scenario 4: Data Export/Backup
 
 ```bash
 # Export current catalog to CSV
@@ -584,4 +702,4 @@ This project is for educational purposes as part of an AI course.
 
 ---
 
-**Last Updated**: 2026-01-17
+**Last Updated**: 2026-01-18
