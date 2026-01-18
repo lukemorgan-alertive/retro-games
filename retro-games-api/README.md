@@ -20,7 +20,6 @@ The API will be available at `http://localhost:8000`
 
 Once running, visit:
 - Interactive docs: `http://localhost:8000/docs`
-- Alternative docs: `http://localhost:8000/redoc`
 
 ## Endpoints
 
