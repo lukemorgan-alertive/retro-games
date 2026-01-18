@@ -37,30 +37,6 @@ def get_db_connection(db_path: Path = DB_PATH) -> Generator[sqlite3.Connection, 
         conn.close()
 
 
-def init_db(db_path: Path = DB_PATH) -> None:
-    """
-    Initialize the database schema.
-    Creates the games table if it doesn't exist.
-    Safe to call multiple times (idempotent).
-    
-    ✓ SECURITY: Database initialization uses static DDL with no user input.
-      CHECK constraint validates condition values at the database level,
-      providing defense-in-depth alongside application-level validation.
-    """
-    with get_db_connection(db_path) as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS games (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                release_year INTEGER NOT NULL,
-                platform TEXT NOT NULL,
-                date_acquired TEXT NOT NULL,
-                condition TEXT CHECK(condition IN ('mint', 'vgc', 'gc', 'used'))
-            )
-        """)
-        conn.commit()
-
-
 class GameModel:
     """Database operations for games."""
     
