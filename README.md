@@ -28,7 +28,7 @@ FastAPI-based REST API providing programmatic access to the games catalog.
 ```bash
 # Initialize the database
 cd retro-games-cli
-python3 main.py init --db ../retro_games.db
+python3 main.py init
 
 # Start the API
 cd ../retro-games-api
@@ -44,5 +44,5 @@ uvicorn app:app --reload
 
 ## TODOS
 
-[ ] Add the ability to create admin users through the cli tool.
-[ ] Add Login/Lougout routues which utilise JWT http authentication to the REST API for the CREATE, UPDATE AND DELETE routes.
+- [ ] Add the ability to create admin users through the cli tool.
+- [ ] Add Login/Lougout routues for admin users which utilise JWT http authentication to the REST API for the CREATE, UPDATE AND DELETE routes.
