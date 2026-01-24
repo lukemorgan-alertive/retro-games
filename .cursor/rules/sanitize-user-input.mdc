@@ -1,8 +1,7 @@
 ---
-description: Sanitize user input from HTML forms. 
+description: Sanitize user input from HTML forms and API endpoints.
 alwaysApply: false
 ---
-
 When we are creating any templates or components that are intended to take in user input from ANY USER, we need to ensure that this input is correctly sanitized to prevent XSS when it is processed on the server.
 
 We need to ensure that ALL HTML `<script>` tags are sanitized from user input, unless otherwise directed. 

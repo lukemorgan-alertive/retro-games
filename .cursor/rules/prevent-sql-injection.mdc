@@ -4,6 +4,6 @@ alwaysApply: false
 ---
 This project currently uses an SQLite database. 
 
-When adding a new feature that will have ANY RESPONSIBILITY for SQL queries, please ENSURE that best practices to PREVENT sql injection are implemented. 
+When ADDING OR MODIFYING any logic that will have ANY RESPONSIBILITY for SQL queries, please ENSURE that best practices to PREVENT sql injection are implemented. 
 
 Please ensure you document any considerations clearly INLINE with the queries.
