@@ -1,5 +1,5 @@
 ---
-description: Prevent XSS when rendering data and output in templates and components
+description: Prevent XSS when rendering data 
 alwaysApply: false
 ---
 When we are creating templates that will render HTML, we need to ensure that considerations are made to prevent Cross-Site Scripting. This needs to cosnider all data that is rendered in the template. 

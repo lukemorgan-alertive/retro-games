@@ -1,7 +1,6 @@
 ---
 alwaysApply: true
 ---
-
 Identify potential edge cases in programming logic you are ADDING OR MODIFYING and IMPLEMENT further programming logic to handle these edge cases effectively. 
 
 Consider scenarios such as boundary conditions, invalid inputs, and unexpected user behavior. Provide code examples where applicable to illustrate your solutions.
