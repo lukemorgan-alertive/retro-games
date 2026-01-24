@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+Please ensure that ALL functions, classes, and methods are thoroughly documented INLINE. Use appropriate docstrings or comments. The documentation should include descriptions of parameters, return values, exceptions raised, and any relevant examples to help users understand how to use the code effectively.
+
+Please use python best practices for documentation, such as adhering to the NumPy or Google style guides for docstrings. 
+
+If we are adding a NEW FEATURE to the codebase, please update the `/documentation/PROJECT_DOCUMENTATION.md` to describe the feature and how it fits into the larger codebase.

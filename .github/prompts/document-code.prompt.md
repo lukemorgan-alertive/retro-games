@@ -15,3 +15,5 @@ Additionally, create a separate markdown file named `DOCUMENTATION.md` IF IT DOE
 3. Examples of common use cases.
 4. Any dependencies or prerequisites needed to work with the code.
 5. Contribution guidelines for future developers.
+
+When you add a new non-trivial feature, please update the `DOCUMENTATION.md` to describe the feature and how it fits into the larger codebase. 

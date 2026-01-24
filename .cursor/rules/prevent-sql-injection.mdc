@@ -1,0 +1,9 @@
+---
+description: prevent SQL injection when creating or modifying database queries
+alwaysApply: false
+---
+This project currently uses an SQLite database. 
+
+When adding a new feature that will have ANY RESPONSIBILITY for SQL queries, please ENSURE that best practices to PREVENT sql injection are implemented. 
+
+Please ensure you document these best practices.

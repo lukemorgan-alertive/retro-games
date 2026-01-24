@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+Identify potential edge cases in programming logic and IMPLEMENT further programming logic to handle these edge cases effectively. 
+
+Consider scenarios such as boundary conditions, invalid inputs, and unexpected user behavior. Provide code examples where applicable to illustrate your solutions.
+
+Where remedial actions are taken, ensure that they follow best practices for error handling and user feedback and DOCUMENT these changes clearly ALONGSIDE any remediations for the edge case.
