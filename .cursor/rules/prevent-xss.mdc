@@ -5,4 +5,4 @@ alwaysApply: false
 
 When we are creating templates that will render HTML, we need to ensure that considerations are made to prevent Cross-Site Scripting. This needs to cosnider all data that is rendered in the template. 
 
-These should follow python templating best practices. Please also ensure we document any implemenations INLINE in the template using comments that WILL NOT be rendered with the HTML.
+Please also ensure we document any implemenations INLINE in the template using comments that WILL NOT be rendered with the HTML.
