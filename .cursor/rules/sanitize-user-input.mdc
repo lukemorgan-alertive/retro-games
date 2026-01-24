@@ -1,0 +1,14 @@
+---
+description: Sanitize user input from HTML forms. 
+alwaysApply: false
+---
+
+When we are creating any templates or components that are intended to take in user input from ANY USER, we need to ensure that this input is correctly sanitized to prevent XSS when it is processed on the server.
+
+We need to ensure that ALL HTML `<script>` tags are sanitized from user input, unless otherwise directed. 
+
+We also want to ensure that text has sensible length limits to prevent Buffer overflows and DoS and numbers are range checked and sensible for the input. 
+
+Where files are uploaded, we need to prevent directory traversal attacks. 
+
+YOU MUST document any implementations where you write logic to sanitize user input. 
